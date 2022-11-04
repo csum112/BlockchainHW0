@@ -24,6 +24,7 @@ contract CrowdFunding is Ownable {
     event newContribution(address, uint256);
     event newWithdrawal(address, uint256);
     event newMilestoneReached(Stages stage);
+    event sponsorshipFailed(address);
 
     constructor(uint256 fundingGoal, uint256 totalShares) {
         goal = fundingGoal;
@@ -91,7 +92,9 @@ contract CrowdFunding is Ownable {
 
     function __notifySponsors() private {
         for (uint256 idx = 0; idx < sponsors.length; idx++) {
-            sponsors[idx].onPreFinanced();
+            try sponsors[idx].onPreFinanced() {} catch {
+                emit sponsorshipFailed(address(sponsors[idx]));
+            }
         }
     }
 
@@ -106,4 +109,8 @@ contract CrowdFunding is Ownable {
         errmsg = string.concat(errmsg, Strings.toString(contribution));
         return errmsg;
     }
+
+    receive() external payable {}
+
+    fallback() external {}
 }

@@ -85,7 +85,7 @@ describe("CrowdFunding", function () {
     expect(balance).to.equal(donationValue);
 
     const withdrawValue = ethers.utils.parseEther("2.0");
-    // Withdraw 20 ether.
+    // Try withdraw 20 ether.
     await expect(crowdFunding.withdraw(withdrawValue)).to.be.reverted;
   });
 
@@ -99,7 +99,7 @@ describe("CrowdFunding", function () {
 
     const withdrawValue = ethers.utils.parseEther("1.0");
 
-    // Withdraw 10 ether.
+    // Try withdraw 10 ether.
     await expect(crowdFunding.withdraw(withdrawValue)).to.be.reverted;
   });
 
@@ -111,19 +111,19 @@ describe("CrowdFunding", function () {
     let balance = await ethers.provider.getBalance(crowdFunding.address);
     expect(balance).to.equal(ZERO);
 
-    // Donate 10 ether.
+    // Donate 1010 ether.
     const donationValue = ethers.utils.parseEther("101.0");
     const options = { value: donationValue };
     await expect(crowdFunding.contribute(options))
       .to.emit(crowdFunding, "newContribution")
       .withArgs(donor.address, donationValue);
 
-    // Expect the contract to contain 10 ether.
+    // Expect the contract to contain 1010 ether.
     balance = await ethers.provider.getBalance(crowdFunding.address);
     expect(balance).to.equal(donationValue);
 
     const withdrawValue = ethers.utils.parseEther("2.0");
-    // Withdraw 20 ether.
+    // Tr withdraw 20 ether.
     await expect(crowdFunding.withdraw(withdrawValue)).to.be.reverted;
   });
 });

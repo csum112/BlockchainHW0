@@ -28,7 +28,7 @@ contract DistributeFunding is Ownable {
     }
 
     receive() external payable onlyOwner {
-        _goal = CrowdFunding(msg.sender).goal();
+        _goal = CrowdFunding(payable(msg.sender)).goal();
         completed = true;
         require(
             msg.value >= _goal,
