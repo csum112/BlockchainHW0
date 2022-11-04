@@ -7,18 +7,18 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "contracts/DistributeFunding.sol";
 import "contracts/SponsorFunding.sol";
 
-enum Stages {
-    NOT_FINANCED,
-    PRE_FINANCED,
-    FINANCED
-}
-
 contract CrowdFunding is Ownable {
+    enum Stages {
+        NOT_FINANCED,
+        PRE_FINANCED,
+        FINANCED
+    }
+
     uint256 public goal;
     Stages public currentStage = Stages.NOT_FINANCED;
     mapping(address => uint256) private contributors;
 
-    DistributeFunding private distributor;
+    DistributeFunding public distributor;
     SponsorFunding[] private sponsors;
 
     event newContribution(address, uint256);
@@ -74,6 +74,11 @@ contract CrowdFunding is Ownable {
 
         currentStage = Stages.FINANCED;
         emit newMilestoneReached(currentStage);
+
+        (bool sent, ) = payable(address(distributor)).call{
+            value: address(this).balance
+        }("");
+        require(sent, "Failed to transfer funds to distributor.");
     }
 
     function addShareholder(address dst, uint256 qty) public onlyOwner {
