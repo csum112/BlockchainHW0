@@ -14,24 +14,24 @@ contract SponsorFunding is Ownable {
         address campaign,
         uint256 rateDividend,
         uint256 rateDivisor
-    ) {
+    ) payable {
         _campaign = campaign;
         _rateDividend = rateDividend;
         _rateDivisor = rateDivisor;
-        CrowdFunding(_campaign).registerSponsor(this);
+        CrowdFunding(payable(_campaign)).registerSponsor(this);
     }
 
-    function onPreFinanced() public {
+    function onPreFinanced() public payable {
         require(msg.sender == _campaign, "Not authorized.");
-        CrowdFunding crowdFunding = CrowdFunding(_campaign);
+        CrowdFunding crowdFunding = CrowdFunding(payable(_campaign));
 
         require(
-            _campaign.balance == crowdFunding.goal(),
+            _campaign.balance >= crowdFunding.goal(),
             "Goal has not yet been reached."
         );
 
         uint256 toPay = (crowdFunding.goal() * _rateDividend) / _rateDivisor;
-        require(toPay >= address(this).balance, "Insuficient funds.");
+        require(toPay <= address(this).balance, "Insuficient funds.");
 
         (bool sent, ) = payable(_campaign).call{value: toPay}("");
         require(sent, "Failed transaction.");
