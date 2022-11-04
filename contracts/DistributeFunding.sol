@@ -34,7 +34,7 @@ contract DistributeFunding is Ownable {
     }
 
     fallback() external {
-      revert("Not implemented.");
+        revert("Not implemented.");
     }
 
     function withdraw(uint256 amount) public {

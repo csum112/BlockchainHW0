@@ -6,6 +6,8 @@
     "build": "hardhat compile",
     "test": "hardhat test",
     "dev": "hardhat node",
+    "format": "npx prettier --write .",
+    "check-format": "npx prettier --check '**/*.(sol|js|ts|json)'",
     "deploy": "hardhat run --network localhost scripts/deploy.ts"
   },
   "keywords": [],
