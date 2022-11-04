@@ -96,9 +96,9 @@ contract CrowdFunding is Ownable {
     ) private pure returns (string memory) {
         string
             memory errmsg = "Amount must be lesser or equal to the total contribution: ";
-        string.concat(errmsg, Strings.toString(amount));
-        string.concat(errmsg, " > ");
-        string.concat(errmsg, Strings.toString(contribution));
+        errmsg = string.concat(errmsg, Strings.toString(amount));
+        errmsg = string.concat(errmsg, " > ");
+        errmsg = string.concat(errmsg, Strings.toString(contribution));
         return errmsg;
     }
 }
