@@ -16,7 +16,7 @@ describe("SponsorFunding", function () {
     return { crowdFunding };
   }
 
-  it("add sponsorFunding is done successfully", async function () {
+  it("sponsorFunding is done successfully", async function () {
     const { crowdFunding } = await loadFixture(deployCrowdFunding);
     const [donor] = await ethers.getSigners();
     const dividend = 1;
@@ -93,5 +93,34 @@ describe("SponsorFunding", function () {
       crowdFunding.address
     );
     expect(crowdFundingBalance2).to.equal(ethers.utils.parseEther("100.0"));
+  });
+
+  it("sponsorFunding.onPreFinanced() is called by other entity", async function () {
+    const { crowdFunding } = await loadFixture(deployCrowdFunding);
+    const [entity] = await ethers.getSigners();
+    const dividend = 1;
+    const divisor = 100;
+    const sponsorFunding = await ethers
+      .getContractFactory("SponsorFunding")
+      .then((contract) =>
+        contract.deploy(crowdFunding.address, dividend, divisor, {
+          value: ethers.utils.parseEther("50.0"),
+        })
+      );
+
+    // Expect the crowdFunding contract to initially be empty.
+    let crowdFundingBalance = await ethers.provider.getBalance(
+      crowdFunding.address
+    );
+    expect(crowdFundingBalance).to.equal(ZERO);
+
+    //Expect calling onPrefinanced by other entity to be reverted
+    expect(sponsorFunding.connect(entity).onPreFinanced()).to.be.reverted;
+
+    // Expect the sponsorFunding contract to initially be 500.
+    let sponsorBalance = await ethers.provider.getBalance(
+      sponsorFunding.address
+    );
+    expect(sponsorBalance).to.equal(ethers.utils.parseEther("50.0"));
   });
 });
