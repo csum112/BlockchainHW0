@@ -30,7 +30,10 @@ contract DistributeFunding is Ownable {
     receive() external payable onlyOwner {
         _goal = CrowdFunding(msg.sender).goal();
         completed = true;
-        require(msg.value >= _goal, "Invalid state: the goal wasn't reached.");
+        require(
+            msg.value >= _goal,
+            "Invalid state: the goal wasn't yet reached."
+        );
     }
 
     fallback() external {
